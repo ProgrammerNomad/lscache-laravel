@@ -19,7 +19,7 @@ It provides two middlewares and one facade:
 Require this package using composer.
 
 ```
-composer require litespeed/lscache-laravel
+composer require programmernomad/lscache-laravel
 ```
 
 Laravel uses Auto-Discovery, so you won't have to make any changes to your application, the two middlewares and facade will be available right from the beginning.
