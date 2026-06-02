@@ -20,7 +20,7 @@
             "email": "support@litespeedtech.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
             "Litespeed\\LSCache\\": "src/"

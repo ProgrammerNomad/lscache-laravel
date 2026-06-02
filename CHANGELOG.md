@@ -1,4 +1,8 @@
 # Changelog
+## 2.1.0
+- Add `purgeTag(string $tag)` convenience method as a single-tag shorthand for `purgeTags()`
+- Fix ESI suffix (`esi=on`) not being appended when `no-cache` directive is active (would produce invalid `no-cache,esi=on` header)
+
 ## 2.0.0
 - Support dynamic laravel route parameters (Thanks to @i1yaz)
 - Enforce minimum PHP version to 5.6 through composer.json

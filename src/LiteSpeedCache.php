@@ -30,6 +30,11 @@ class LiteSpeedCache
         $this->purge('*', $stale);
     }
 
+    public function purgeTag(string $tag, bool $stale = true): void
+    {
+        $this->purge('tag=' . $tag, $stale);
+    }
+
     public function purgeTags(array $tags, bool $stale = true): void
     {
         if (count($tags)) {

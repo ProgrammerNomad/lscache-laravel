@@ -49,8 +49,8 @@ class LSCacheMiddleware
             $lscache_string = str_replace(';', ',', $lscache_control);
         }
 
-        if (Str::contains($lscache_string, 'esi=on') == false) {
-            $lscache_string = $lscache_string.($esi_enabled ? ',esi=on' : null);
+        if ($esi_enabled && !Str::contains($lscache_string, 'no-cache') && !Str::contains($lscache_string, 'esi=on')) {
+            $lscache_string = $lscache_string . ',esi=on';
         }
 
         if ($response->headers->has('X-LiteSpeed-Cache-Control') == false) {
