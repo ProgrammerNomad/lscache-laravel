@@ -8,6 +8,10 @@
     "license": "GPL-3.0-only",
     "authors": [
         {
+            "name": "Nomad Programmer",
+            "email": "shiv@srapsware.com"
+        },
+        {
             "name": "Lucas Rolff",
             "email": "lucas@lucasrolff.com"
         },
