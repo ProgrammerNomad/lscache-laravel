@@ -1,12 +1,18 @@
 ## Laravel LSCache
 
-This package allows you to use lscache together with Laravel.
+This package allows you to use LSCache together with Laravel. It works with both **LiteSpeed Web Server** (all editions, including the free OpenLiteSpeed) and the commercial **LiteSpeed Enterprise** server.
 
 It provides two middlewares and one facade:
 
 - LSCache Middleware to control the cache-control header for LiteSpeed LSCache
 - LSTags Middleware to control the tag header for LiteSpeed LSCache
 - LSCache facade to handle purging
+
+## Requirements
+
+| Package version | Laravel | PHP   |
+|-----------------|---------|-------|
+| 2.x             | 10 – 13 | ≥ 8.1 |
 
 ## Installation
 
@@ -18,42 +24,7 @@ composer require litespeed/lscache-laravel
 
 Laravel uses Auto-Discovery, so you won't have to make any changes to your application, the two middlewares and facade will be available right from the beginning.
 
-#### Steps for Laravel >=5.1 and <=5.4
-
-The package can be used for Laravel 5.1 to 5.4 as well, however due to lack of Auto-Discovery, a few additional steps have to be performed.
-
-In `config/app.php` you have to add the following code in your `aliases`:
-
-```
-'aliases' => [
-    ...
-    'LSCache'   => Litespeed\LSCache\LSCache::class,
-],
-```
-
-In `app/Http/Kernel.php` you have to add the two middlewares under `middleware` and `routeMiddleware`:
-
-```
-protected $middleware = [
-    ...
-    \Litespeed\LSCache\LSCacheMiddleware::class,
-    \Litespeed\LSCache\LSTagsMiddleware::class,
-];
-
-protected $routeMiddleware = [
-    ...
-    'lscache' => \Litespeed\LSCache\LSCacheMiddleware::class,
-    'lstags' => \Litespeed\LSCache\LSTagsMiddleware::class,
-];
-```
-
-Copy `lscache.php` to `config/`:
-
-Copy the package `config/lscache.php` file to your `config/` directory.
-
-**important**: Do not add the ServiceProvider under `providers` in `config/app.php`.
-
-#### Steps for Laravel 5.5 and above
+#### Steps for Laravel 5.5 – 10 (legacy)
 
 You should publish the package configuration, which allows you to set the defaults for the `X-LiteSpeed-Cache-Control` header:
 
@@ -61,15 +32,44 @@ You should publish the package configuration, which allows you to set the defaul
 php artisan vendor:publish --provider="Litespeed\LSCache\LSCacheServiceProvider"
 ```
 
-### Enable CacheLookup for LiteSpeed Cache
+#### Steps for Laravel 11 and above
 
-To enable CacheLookup for LiteSpeed Cache, you have to include the following code, either on server, vhost or .htaccess level:
+Laravel 11 removed `app/Http/Kernel.php` and moved middleware registration to `bootstrap/app.php`. This package registers its global middleware automatically via the service provider, so **no manual kernel edits are needed**. Publishing the config is still optional but recommended:
+
+```
+php artisan vendor:publish --provider="Litespeed\LSCache\LSCacheServiceProvider"
+```
+
+### Enable CacheLookup — LiteSpeed Web Server (Enterprise)
+
+To enable CacheLookup for LiteSpeed Cache, add the following to your `.htaccess` (or at server/vhost level in the LiteSpeed admin):
 
 ```apacheconf
 <IfModule LiteSpeed>
    CacheLookup on
 </IfModule>
 ```
+
+### Enable CacheLookup — OpenLiteSpeed
+
+OpenLiteSpeed supports the same LSCache response headers (`X-LiteSpeed-Cache-Control`, `X-LiteSpeed-Tag`, `X-LiteSpeed-Purge`) as the commercial server, so this package works with OpenLiteSpeed without any code changes.
+
+**Required steps in the OpenLiteSpeed admin panel:**
+
+1. Log in to the OLS WebAdmin console (default: `https://your-server:7080`).
+2. Go to **Server** → **Cache** and set **Enable Cache** to `Yes`. Save and perform a graceful restart.
+3. Optionally configure **Cache Storage Path**, **Default Cache TTL**, etc. in the same section.
+4. Add the `CacheLookup` directive to your `.htaccess` (OLS honours `.htaccess` files):
+
+```apacheconf
+<IfModule LiteSpeed>
+   CacheLookup on
+</IfModule>
+```
+
+Or enable it at the virtual-host level via **Virtual Hosts** → (your vhost) → **Cache** → **Enable Cache** = `Yes`.
+
+> **Note:** Cache purge via `X-LiteSpeed-Purge` response headers works in OpenLiteSpeed the same way as in LiteSpeed Enterprise — no extra configuration is needed beyond enabling the cache module.
 
 ## Usage
 
